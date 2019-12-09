@@ -1,0 +1,50 @@
+image: docker:latest
+
+stages:
+  - build
+  - test
+  - deploy
+
+variables:
+  REGISTRY_URL: registry.docker.com:5000
+
+before_script:
+  - docker -v
+
+# Docker tasks
+container_build:
+    stage: build
+    script:
+     - docker build -t $REGISTRY_URL/ci_container -f Dockerfile .
+    artifacts:
+        expire_in: 1 week
+
+container_test:
+    stage: test
+    script:
+      - docker run --rm $REGISTRY_URL/ci_container docker -v
+      - docker run --rm $REGISTRY_URL/ci_container python3 -V
+      - docker run --rm $REGISTRY_URL/ci_container virtualenv --version
+      - docker run --rm $REGISTRY_URL/ci_container gcc -v
+    artifacts:
+        expire_in: 1 week
+
+regression:
+    stage: test
+    script:
+     - export CONTAINER_NAME=$(docker ps -a | grep $HOSTNAME-build | awk '{print $NF}')
+     - export VOLUME_NAME=$(docker inspect --format '{{range .Mounts}}{{if eq .Destination "/builds"}}{{.Source}}{{end}}{{end}}' $CONTAINER_NAME)
+     - export MOUNT_BASE=$VOLUME_NAME/$CI_PROJECT_PATH
+     - docker inspect $CONTAINER_NAME
+     - env
+     - docker run --rm -v $MOUNT_BASE:/ $REGISTRY_URL/ci_container echo "hello world"
+    artifacts:
+        expire_in: 1 week
+
+container_push:
+    stage: deploy
+    script:
+     - docker push $REGISTRY_URL/ci_container
+    artifacts:
+        expire_in: 1 week
+# /Docker tasks
