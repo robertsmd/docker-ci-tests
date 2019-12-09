@@ -1,0 +1,33 @@
+#-------------------------------------------------------------------------------
+version: "3.7"
+services:
+#-------------------------------------------------------------------------------
+
+    # docker
+    #-----------------------------------------------------------
+    gitlab-runner0:
+        image: gitlab-runner:pldc
+        volumes:
+          - /var/lib/docker-data/compose/gitlab/runner0:/etc/gitlab-runner
+          - /var/run/docker.sock:/var/run/docker.sock
+          - /usr/share/ca-certificates/yourcerthere.crt:/etc/gitlab-runner/certs/yourcerthere.crt
+        healthcheck:
+            test: true || exit 1
+        restart: always
+
+    gitlab-runner1:
+        image: gitlab-runner:pldc
+        volumes:
+          - /var/lib/docker-data/compose/gitlab/runner1:/etc/gitlab-runner
+          - /var/run/docker.sock:/var/run/docker.sock
+          - /usr/share/ca-certificates/yourcerthere.crt:/etc/gitlab-runner/certs/yourcerthere.crt
+        healthcheck:
+            test: true || exit 1
+        restart: always
+
+#-------------------------------------------------------------------------------
+networks:
+    default:
+        external:
+            name: dockernet
+#-------------------------------------------------------------------------------
