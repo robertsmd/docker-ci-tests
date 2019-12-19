@@ -6,7 +6,7 @@ services:
     # docker
     #-----------------------------------------------------------
     gitlab-runner0:
-        image: gitlab-runner:pldc
+        image: gitlab/gitlab-runner
         volumes:
           - /var/lib/docker-data/compose/gitlab/runner0:/etc/gitlab-runner
           - /var/run/docker.sock:/var/run/docker.sock
@@ -16,7 +16,7 @@ services:
         restart: always
 
     gitlab-runner1:
-        image: gitlab-runner:pldc
+        image: gitlab/gitlab-runner
         volumes:
           - /var/lib/docker-data/compose/gitlab/runner1:/etc/gitlab-runner
           - /var/run/docker.sock:/var/run/docker.sock
