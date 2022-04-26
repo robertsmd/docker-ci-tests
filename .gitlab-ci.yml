@@ -32,7 +32,7 @@ container_test:
 regression:
     stage: test
     script:
-     - export CONTAINER_NAME=$(docker ps -a | grep $HOSTNAME-build | awk '{print $NF}')
+     - export CONTAINER_NAME=$(docker ps -a | grep $HOSTNAME | grep build | awk '{print $NF}')
      - export VOLUME_NAME=$(docker inspect --format '{{range .Mounts}}{{if eq .Destination "/builds"}}{{.Source}}{{end}}{{end}}' $CONTAINER_NAME)
      - export MOUNT_BASE=$VOLUME_NAME/$CI_PROJECT_PATH
      - docker inspect $CONTAINER_NAME
